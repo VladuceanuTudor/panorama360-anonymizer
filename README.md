@@ -10,6 +10,87 @@ Pentru o scriere completă, cu exemple vizuale before/after pentru fiecare etap�
 vezi `docs/documentatie_proiect.docx`. **Nu e inclus in git** (contine exemple
 cu fete/placute reale, chiar daca majoritatea anonimizate) -- ramane doar local.
 
+## Instalare de la zero (dupa clone)
+
+Mediile Python (`.venv/`, `nullface/conda_env/`) si modelele (`weights/`) **nu
+sunt in git** (vezi `.gitignore`) -- trebuie recreate local. Pasii de mai jos
+au fost verificati sa functioneze pe aceasta masina (Python 3.14 / 3.12, GPU
+NVIDIA cu CUDA 13); pe alt sistem s-ar putea sa fie nevoie de ajustari minore
+(ex. alta versiune de torch pentru alt GPU).
+
+### 1. Clone
+
+```bash
+git clone git@github.com:VladuceanuTudor/panorama360-anonymizer.git
+cd panorama360-anonymizer
+```
+
+### 2. Mediul principal (`.venv/`, Python 3.14) -- M8, SCRFD, cenzura placute, fete mici
+
+```bash
+python3.14 -m venv .venv
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install torch torchvision ultralytics onnxruntime-gpu opencv-python-headless numpy
+```
+
+Fara GPU NVIDIA: inlocuieste `onnxruntime-gpu` cu `onnxruntime` -- scripturile
+cad automat pe CPU (mai lent, dar functional).
+
+### 3. Modelele (`weights/`)
+
+```bash
+mkdir -p weights
+curl -L -o weights/yolov8_face.pt  https://huggingface.co/arnabdhar/YOLOv8-Face-Detection/resolve/main/model.pt
+curl -L -o weights/yolov8_plate.pt https://huggingface.co/Koushim/yolov8-license-plate-detection/resolve/main/best.pt
+curl -L -o weights/scrfd_10g.onnx  https://huggingface.co/immich-app/buffalo_l/resolve/main/detection/model.onnx
+
+# yolov8n_coco.pt -- lasa ultralytics sa rezolve singur URL-ul curent de release
+.venv/bin/python3.14 -c "
+from ultralytics import YOLO
+import shutil
+m = YOLO('yolov8n.pt')
+shutil.copy(m.ckpt_path, 'weights/yolov8n_coco.pt')
+"
+```
+
+### 4. Mediul NullFace (`nullface/conda_env/`, Python 3.12) -- necesar doar pentru fetele mari din `hybrid_anonymize.py`
+
+Sari peste acest pas daca vrei doar cenzura placutelor (`censor_plates.py`) sau
+doar testul de segmentare+skin-fill (`src/face_skin_fill.py`) -- ambele
+folosesc doar `.venv/`.
+
+```bash
+git clone https://github.com/hanweikung/nullface nullface/repo
+
+# micromamba -- necesar pentru insightface/opencv/onnxruntime-gpu, care au
+# nevoie de build-uri prebuilt din conda-forge (nu se compileaza usor din pip
+# pe Python 3.12 fara toolchain complet)
+curl -Ls https://micro.mamba.pm/install.sh | bash
+~/.local/bin/micromamba create -p nullface/conda_env -c conda-forge python=3.12 \
+    insightface=0.7.3 opencv=5.0.0 "onnxruntime-gpu=1.30.0" -y
+
+# torch cu build CUDA 12.8 -- necesar pentru GPU-uri recente (ex. RTX 50xx/Blackwell);
+# pe un GPU mai vechi poti incerca direct versiunile din environment.yml-ul
+# original al NullFace (fara override-ul de mai jos)
+nullface/conda_env/bin/pip install torch==2.11.0+cu128 torchvision==0.26.0+cu128 \
+    --index-url https://download.pytorch.org/whl/cu128
+nullface/conda_env/bin/pip install diffusers==0.30.0 transformers==4.51.3 peft==0.15.2 \
+    face-alignment==1.4.1 accelerate
+```
+
+### 5. Rulează cenzura, pe rând, cu output-ul unuia ca input pentru celalalt
+
+```bash
+# cenzura placutelor (dreptunghi alb, Metoda 2)
+.venv/bin/python3.14 scripts/censor_plates.py <folder_input> <folder_iesire_placute>
+
+# anonimizare fete (hibrid NullFace + skin-fill), peste rezultatul de la placute
+nullface/conda_env/bin/python scripts/hybrid_anonymize.py <folder_iesire_placute> <folder_final>
+```
+
+`<folder_final>` are atat fetele cat si placutele anonimizate -- exact fluxul
+folosit pentru rularea reala de 892 de fotografii descrisa mai jos.
+
 ## Structură
 
 ```

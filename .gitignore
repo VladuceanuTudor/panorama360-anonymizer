@@ -15,6 +15,10 @@ nullface/log_*.txt
 # Checkpoint-uri de model (mari, descarcabile din sursele din README)
 weights/*.pt
 weights/*.onnx
+weights/*.pth
+
+# Cod extern clonat (nu al nostru, doar folosit read-only)
+experiments/wpodnet_repo/
 
 # Date personale/sensibile -- fotografii reale, identificabile (neanonimizate)
 data/personal_run/
@@ -38,3 +42,8 @@ nullface_log.txt
 
 # Documentatia are exemple vizuale cu date reale -- ramane doar local
 docs/documentatie_proiect.docx
+
+# Studiu cu imagini reale executate direct in notebook -- ramane doar local
+notebooks/studiu_rafinare_placute_fete.ipynb
+
+docs/.~lock.*
