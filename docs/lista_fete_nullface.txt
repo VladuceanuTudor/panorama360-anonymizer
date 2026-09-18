@@ -1,0 +1,11 @@
+Lista celor 86 de imagini cu fețe generate via NullFace (87 fețe total — img701.jpg a avut 2 fețe mari în același cadru, restul câte 1):
+
+img10, img36, img75, img120, img121, img122, img153, img226, img273, img286,
+img287, img290, img296, img321, img322, img323, img324, img325, img326, img372,
+img392, img408, img410, img411, img421, img431, img432, img445, img446, img447,
+img494, img496, img522, img543, img557, img569, img573, img599, img604, img605,
+img607, img608, img609, img610, img611, img612, img613, img614, img615, img616,
+img617, img618, img619, img620, img626, img627, img628, img630, img631, img632,
+img633, img635, img636, img638, img639, img640, img641, img642, img643, img644,
+img645, img646, img691, img701 (2 fete), img703, img707, img715, img730, img783,
+img786, img787, img798, img804, img805, img840, img887

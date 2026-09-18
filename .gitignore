@@ -1,0 +1,40 @@
+# Medii Python (grele, regenerabile local -- vezi README pentru setup)
+.venv/
+nullface/repo/
+nullface/conda_env/
+nullface/.venv/
+nullface/bin/
+nullface/micromamba_root/
+nullface/.insightface_cache/
+
+# Fisiere de test/log ramase din sanity-check-ul NullFace initial
+nullface/test_face_*.png
+nullface/test_full_panorama_*.png
+nullface/log_*.txt
+
+# Checkpoint-uri de model (mari, descarcabile din sursele din README)
+weights/*.pt
+weights/*.onnx
+
+# Date personale/sensibile -- fotografii reale, identificabile (neanonimizate)
+data/personal_run/
+data/360testIMG/
+
+# Output-uri demo/scratch (regenerabile ruland scripturile pe data/360testIMG)
+outputs/
+
+# Cache Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Artefacte temporare din scripturile de procesare
+*_tmp_crops/
+nullface_log.txt
+
+# SO / editor
+.DS_Store
+*.swp
+
+# Documentatia are exemple vizuale cu date reale -- ramane doar local
+docs/documentatie_proiect.docx
